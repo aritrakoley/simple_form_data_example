@@ -19,23 +19,25 @@
       <br />
 
       <label for="ufiles">Associated Files</label><br />
-      <input type="file" id="ufiles" name="ufiles" /><br />
+      <input type="file" multiple id="ufiles" name="ufiles" /><br />
 
-      <img
-        id="preview"
-        src="#"
-        alt="no selection..."
-        height="100px"
-        width="100px"
-      /><br />
+      <div id="preview"></div>
+      <br />
 
       <button id="submit" name="submit">Submit</button><br />
     </form>
 
     <script>
       document.getElementById("ufiles").addEventListener("change", () => {
-        const ufiles = document.getElementById("ufiles").files[0];
-        document.getElementById("preview").src = URL.createObjectURL(ufiles);
+        const ufiles = document.getElementById("ufiles").files;
+        let img = null;
+        for (let i = 0; i < ufiles.length; i++) {
+          img = document.createElement("img");
+          img.src = URL.createObjectURL(ufiles[i]);
+          img.style.height = "100px";
+          img.style.width = "100px";
+          document.getElementById("preview").appendChild(img);
+        }
       });
 
       const myForm = document.getElementById("myform");
@@ -44,16 +46,17 @@
 
         const uname = document.getElementById("uname").value;
         const upass = document.getElementById("upass").value;
-        const ufiles = document.getElementById("ufiles").files[0];
+        const ufiles = document.getElementById("ufiles").files;
         console.log({ uname, upass, ufiles });
 
         const formData = new FormData();
-        formData.append('uname', uname);
-        formData.append('upass', upass);
-        formData.append('ufiles', ufiles);
+        formData.append("uname", uname);
+        formData.append("upass", upass);
 
-
-
+        for (let i = 0; i < ufiles.length; i++) {
+          formData.append(`ufiles`, ufiles[i]);
+        }
+        
         try {
           const res = await (
             await fetch("http://localhost:8001/uploadData", {

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Form Data Example</title>
+  </head>
+  <body>
+    <h1>Simple Form Data Example</h1>
+    <h3>( single file upload + other data )</h3>
+    <form id="myform">
+      <label for="uname">User Name</label>
+      <input type="text" id="uname" name="uname" />
+      <br />
+
+      <label for="upass">Password</label>
+      <input type="text" id="upass" name="upass" />
+      <br />
+
+      <label for="ufiles">Associated Files</label><br />
+      <input type="file" id="ufiles" name="ufiles" /><br />
+
+      <img
+        id="preview"
+        src="#"
+        alt="no selection..."
+        height="100px"
+        width="100px"
+      /><br />
+
+      <button id="submit" name="submit">Submit</button><br />
+    </form>
+
+    <script>
+      document.getElementById("ufiles").addEventListener("change", () => {
+        const ufiles = document.getElementById("ufiles").files[0];
+        document.getElementById("preview").src = URL.createObjectURL(ufiles);
+      });
+
+      const myForm = document.getElementById("myform");
+      myform.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const uname = document.getElementById("uname").value;
+        const upass = document.getElementById("upass").value;
+        const ufiles = document.getElementById("ufiles").files[0];
+        console.log({ uname, upass, ufiles });
+
+        const formData = new FormData();
+        formData.append('uname', uname);
+        formData.append('upass', upass);
+        formData.append('ufiles', ufiles);
+
+
+
+        try {
+          const res = await (
+            await fetch("http://localhost:8001/uploadData", {
+              method: "POST",
+              body: formData,
+            })
+          ).json();
+          console.log("response", res);
+          alert("Sussessfully Submitted");
+        } catch (err) {
+          console.log(err, err.stack);
+        }
+      });
+    </script>
+  </body>
+</html>
