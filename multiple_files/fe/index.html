@@ -34,9 +34,11 @@
         for (let i = 0; i < ufiles.length; i++) {
           img = document.createElement("img");
           img.src = URL.createObjectURL(ufiles[i]);
+          img.alt = ufiles[i].name;
           img.style.height = "100px";
           img.style.width = "100px";
           document.getElementById("preview").appendChild(img);
+          console.log(JSON.stringify(ufiles[i].name));
         }
       });
 
@@ -54,9 +56,11 @@
         formData.append("upass", upass);
 
         for (let i = 0; i < ufiles.length; i++) {
-          formData.append(`ufiles`, ufiles[i]);
+          const key = `ufile_${i}_${ufiles[i].name}`;
+          console.log(key);
+          formData.append(key, ufiles[i]);
         }
-        
+
         try {
           const res = await (
             await fetch("http://localhost:8001/uploadData", {

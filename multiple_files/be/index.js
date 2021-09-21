@@ -19,18 +19,22 @@ const init = async () => {
       handler: (req, h) => {
         console.log("/uploadData");
         console.log(req.payload);
-        const { uname, upass, ufiles } = req.payload;
-        console.log(ufiles.length);
+        const { uname, upass } = req.payload;
 
-        if (ufiles instanceof Buffer){
-          fs.writeFileSync(`uploaded/${uname}_${upass}.jpg`, ufiles);
-        } else {
-          for (let i = 0; i < ufiles.length; i++) {
-            fs.writeFileSync(`uploaded/${uname}_${upass}_${i}.jpg`, ufiles[i]);
+        console.log(req.payload);
+        const key = Object.keys(req.payload);
+        let keySplit = null;
+        for (let i = 0; i < key.length; i++) {
+          keySplit = key[i].split("_");
+          if (keySplit[0] === "ufile") {
+            fs.writeFileSync(
+              `uploaded/f${keySplit[1]}_u${i}_${keySplit[2]}.jpg`,
+              req.payload[key[i]]
+            );
           }
         }
-        
-        return {status: "success"};
+
+        return { status: "success" };
       },
       payload: {
         maxBytes: 157286400,
